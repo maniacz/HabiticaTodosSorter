@@ -1,3 +1,4 @@
+using HabiticaAPI.RequestHandlers.Todos;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HabiticaAPI.Controllers;
@@ -6,15 +7,26 @@ namespace HabiticaAPI.Controllers;
 public class TodosController : Controller
 {
     private readonly ILogger<TodosController> _logger;
+    private readonly ITodosRequestHandler _todosRequestHandler;
 
-    public TodosController(ILogger<TodosController> logger)
+    public TodosController(ITodosRequestHandler todosRequestHandler, ILogger<TodosController> logger)
     {
         _logger = logger;
+        _todosRequestHandler = todosRequestHandler;
     }
 
     [HttpGet("todos")]
     public async Task<IActionResult> GetAllTodos()
     {
-        
+        var todosResult = await _todosRequestHandler.GetAllTodos();
+
+        if (todosResult.IsSuccess)
+        {
+            return Ok(todosResult);
+        }
+        else
+        {
+            return BadRequest();
+        }
     }
 }

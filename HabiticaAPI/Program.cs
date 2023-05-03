@@ -1,3 +1,6 @@
+using HabiticaAPI.Clients;
+using HabiticaAPI.RequestHandlers.Todos;
+
 namespace HabiticaAPI
 {
     public class Program
@@ -7,6 +10,8 @@ namespace HabiticaAPI
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddSingleton<ITodosRequestHandler, TodosRequestHandler>();
+            builder.Services.AddHabiticaClient(builder.Configuration);
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
