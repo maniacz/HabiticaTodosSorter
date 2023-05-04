@@ -1,4 +1,5 @@
 using HabiticaAPI.Clients;
+using HabiticaAPI.RequestHandlers.Tags;
 using HabiticaAPI.RequestHandlers.Todos;
 
 namespace HabiticaAPI
@@ -11,6 +12,7 @@ namespace HabiticaAPI
 
             // Add services to the container.
             builder.Services.AddSingleton<ITodosRequestHandler, TodosRequestHandler>();
+            builder.Services.AddSingleton<ITagsRequestHandler, TagsRequestHandler>();
             builder.Services.AddHabiticaClient(builder.Configuration);
 
             builder.Services.AddControllers();

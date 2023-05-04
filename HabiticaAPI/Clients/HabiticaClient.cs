@@ -47,6 +47,34 @@ public class HabiticaClient : IHabiticaClient
         }
     }
 
+    public async Task<Result<GetAllTagsResponse>> GetAllTags()
+    {
+        var url = "/api/v3/tags";
+        HttpClient httpClient = CreateHttpClient();
+        
+        try
+        {
+            var response = await httpClient.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var parsedResponse = JsonConvert.DeserializeObject<GetAllTagsResponse>(responseContent);
+                
+                return Result.Ok(parsedResponse);
+            }
+            else
+            {
+                return Result.Fail(new Error("Unable to get all tags."));
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Unexpected error occurred while trying to get all tags.");
+            return Result.Fail(new Error("Unexpected error occurred while trying to get all tags."));
+        }
+    }
+
     private HttpClient CreateHttpClient()
     {
         var client = _httpClientFactory.CreateClient(nameof(HabiticaClient));
