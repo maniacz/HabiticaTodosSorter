@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using FluentResults;
 using HabiticaAPI.Models;
+using HabiticaAPI.Models.Responses;
 using Newtonsoft.Json;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 

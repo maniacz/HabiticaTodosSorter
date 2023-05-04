@@ -1,6 +1,7 @@
 using FluentResults;
 using HabiticaAPI.Clients;
 using HabiticaAPI.Models;
+using HabiticaAPI.Models.Responses;
 
 namespace HabiticaAPI.RequestHandlers.Tags;
 

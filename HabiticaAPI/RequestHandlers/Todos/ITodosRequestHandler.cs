@@ -1,5 +1,6 @@
 using FluentResults;
 using HabiticaAPI.Models;
+using HabiticaAPI.Models.Responses;
 
 namespace HabiticaAPI.RequestHandlers.Todos;
 

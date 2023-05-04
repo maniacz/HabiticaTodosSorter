@@ -1,4 +1,4 @@
-namespace HabiticaAPI.Models;
+namespace HabiticaAPI.Models.Responses;
 
 public class GetAllTagsResponse
 {
