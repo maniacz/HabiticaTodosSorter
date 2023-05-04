@@ -9,11 +9,13 @@ namespace HabiticaAPI.Clients;
 public class HabiticaClient : IHabiticaClient
 {
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IConfiguration _configuration;
     private readonly ILogger<HabiticaClient> _logger;
 
-    public HabiticaClient(IHttpClientFactory httpClientFactory, ILogger<HabiticaClient> logger)
+    public HabiticaClient(IHttpClientFactory httpClientFactory, IConfiguration configuration, ILogger<HabiticaClient> logger)
     {
         _httpClientFactory = httpClientFactory;
+        _configuration = configuration;
         _logger = logger;
     }
     
@@ -48,10 +50,11 @@ public class HabiticaClient : IHabiticaClient
     private HttpClient CreateHttpClient()
     {
         var client = _httpClientFactory.CreateClient(nameof(HabiticaClient));
-        // todo: Wrzuć te headery do secrets
-        client.DefaultRequestHeaders.Add("x-client", "ab16cc28-21ca-4b8f-9306-f637d57a9f23-Testing");
-        client.DefaultRequestHeaders.Add("x-api-user", "ab16cc28-21ca-4b8f-9306-f637d57a9f23");
-        client.DefaultRequestHeaders.Add("x-api-key", "4407e447-9cb8-4686-b570-d278e87b563e");
+        var clientConfig = _configuration.GetSection("HabiticaClient").Get<HabiticaClientHeaders>();
+        
+        client.DefaultRequestHeaders.Add("x-client", clientConfig.XClient);
+        client.DefaultRequestHeaders.Add("x-api-user", clientConfig.XApiUser);
+        client.DefaultRequestHeaders.Add("x-api-key", clientConfig.XApiKey);
 
         return client;
     }
