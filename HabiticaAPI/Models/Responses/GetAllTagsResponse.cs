@@ -2,14 +2,14 @@ namespace HabiticaAPI.Models.Responses;
 
 public class GetAllTagsResponse
 {
-    public bool success { get; set; }
-    public Data[] data { get; set; }
+    public bool Success { get; set; }
+    public TagData[] Data { get; set; }
     
-    public class Data
+    public class TagData
     {
-        public string id { get; set; }
-        public string name { get; set; }
-        public object challenge { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public object Challenge { get; set; }
     }
 }
 

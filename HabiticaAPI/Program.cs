@@ -1,6 +1,8 @@
 using HabiticaAPI.Clients;
+using HabiticaAPI.Mappings;
 using HabiticaAPI.RequestHandlers.Tags;
 using HabiticaAPI.RequestHandlers.Todos;
+using HabiticaAPI.Services;
 
 namespace HabiticaAPI
 {
@@ -11,9 +13,20 @@ namespace HabiticaAPI
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            // Handlers
             builder.Services.AddSingleton<ITodosRequestHandler, TodosRequestHandler>();
             builder.Services.AddSingleton<ITagsRequestHandler, TagsRequestHandler>();
+            
+            // Services:
+            builder.Services.AddSingleton<ITagService, TagService>();
+            builder.Services.AddSingleton<ISorterService, SorterService>();
+            builder.Services.AddSingleton<ITodoService, TodoService>();
+            
+            // Clients:
             builder.Services.AddHabiticaClient(builder.Configuration);
+            
+            // Infrastructure
+            builder.Services.AddAutoMapper(typeof(TagProfile));
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

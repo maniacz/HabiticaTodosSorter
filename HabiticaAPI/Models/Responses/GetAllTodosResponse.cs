@@ -3,12 +3,12 @@ namespace HabiticaAPI.Models.Responses;
 public class GetAllTodosResponse
 {
     public bool Success { get; set; }
-    public Data[] Data { get; set; }
+    public TodoData[] Data { get; set; }
     public Notifications[] Notifications { get; set; }
     public string AppVersion { get; set; }
 }
 
-public class Data
+public class TodoData
 {
     public Challenge Challenge { get; set; }
     public Group Group { get; set; }

@@ -29,4 +29,12 @@ public class TodosController : Controller
             return BadRequest();
         }
     }
+
+    [HttpGet("sort")]
+    public async Task<IActionResult> SortTodos()
+    {
+        var sortResult = await _todosRequestHandler.SortTodos();
+
+        return null;
+    }
 }
