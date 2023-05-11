@@ -19,7 +19,8 @@ public class TodoProfile : Profile
         CreateMap<TodoData, Todo>()
             .ForMember(x => x.TaskId, y => y.MapFrom(z => z.Id))
             .ForMember(x => x.Tags, y => y.MapFrom(z => z.Tags))
-            .ForMember(x => x.TaskName, y => y.MapFrom(z => z.Text));
+            .ForMember(x => x.TaskName, y => y.MapFrom(z => z.Text))
+            .ForMember(x => x.CreationTime, y => y.MapFrom(z => z.CreatedAt));
     }
 }
 
