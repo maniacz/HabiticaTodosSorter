@@ -1,16 +1,21 @@
+using HabiticaAPI.Models.Tags;
 using HabiticaAPI.Models.Todos;
 
 namespace HabiticaAPI.Services;
 
 public class SorterService : ISorterService
 {
-    public ICollection<Todo> SortTodos(ICollection<Todo> todos)
-    {
-        foreach (var todo in todos)
-        {
-            // todo.Tags.Contains()
-        }
+    private readonly ILogger<SorterService> _logger;
 
-        return null;
+    public SorterService(ILogger<SorterService> logger)
+    {
+        _logger = logger;
+    }
+    public ICollection<Todo> SortTodos(List<Todo> todos, SortedList<int, Tag> tagsOrder)
+    {
+        todos.Sort(new TodoComparer(tagsOrder));
+        _logger.LogDebug("Sorted todos: {sortedTodos}", todos);
+
+        return todos;
     }
 }

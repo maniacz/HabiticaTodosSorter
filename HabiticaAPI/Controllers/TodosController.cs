@@ -33,7 +33,13 @@ public class TodosController : Controller
     [HttpGet("sort")]
     public async Task<IActionResult> SortTodos()
     {
-        var sortResult = await _todosRequestHandler.SortTodos();
+        var todosResult = await _todosRequestHandler.GetAllTodos();
+        if (todosResult.IsFailed)
+        {
+            return BadRequest();
+        }
+        
+        var sortResult = await _todosRequestHandler.SortTodos(todosResult.Value.ToList());
 
         return null;
     }

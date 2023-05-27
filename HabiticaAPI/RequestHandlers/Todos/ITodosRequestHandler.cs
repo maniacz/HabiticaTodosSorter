@@ -8,5 +8,5 @@ namespace HabiticaAPI.RequestHandlers.Todos;
 public interface ITodosRequestHandler
 {
     Task<Result<IList<Todo>>> GetAllTodos();
-    Task<Result<ICollection<Todo>>> SortTodos();
+    Task<Result<ICollection<Todo>>> SortTodos(List<Todo> todosToSort);
 }
