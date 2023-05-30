@@ -13,7 +13,7 @@ public class SorterService : ISorterService
     }
     public ICollection<Todo> SortTodos(List<Todo> todos, SortedList<int, Tag> tagsOrder)
     {
-        todos.Sort(new TodoComparer(tagsOrder));
+        todos.Sort(new TodoComparer(tagsOrder, _logger));
         _logger.LogDebug("Sorted todos: {sortedTodos}", todos);
 
         return todos;

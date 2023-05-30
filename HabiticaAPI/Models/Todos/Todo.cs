@@ -9,4 +9,10 @@ public class Todo
     public int TaskPosition { get; set; }
     public DateTime CreationTime { get; set; }
     public ICollection<Tag> Tags { get; set; } = new List<Tag>();
+
+    public string ListTagNames()
+    {
+        var tagNames = Tags.Select(t => t.Name);
+        return string.Join(',', tagNames);
+    }
 }
