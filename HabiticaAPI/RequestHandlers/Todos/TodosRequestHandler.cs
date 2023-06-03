@@ -49,7 +49,7 @@ public class TodosRequestHandler : ITodosRequestHandler
         return Result.Ok(allTodos);
     }
 
-    public async Task<Result<ICollection<Todo>>> SortTodos(List<Todo> todosToSort)
+    public async Task<Result<ICollection<Todo>>> SortTodos(ICollection<Todo> todosToSort)
     {
         var sortingTagsResult = await _tagService.GetTagsForSorting();
         if (sortingTagsResult.IsFailed)
@@ -58,7 +58,10 @@ public class TodosRequestHandler : ITodosRequestHandler
         }
 
         var tagsOrdered = _tagService.SetTagSortingOrder(sortingTagsResult.Value);
-        var sortedTodos = _sorterService.SortTodos(todosToSort, tagsOrdered);
+        var sortedTodos = _sorterService.GetTodosInFinalOrder(todosToSort, tagsOrdered);
+
+        var sortingResult = _sorterService.SortTodos(todosToSort, sortedTodos);
+        
         return null;
     }
 }
