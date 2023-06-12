@@ -10,13 +10,14 @@ public class SorterService : ISorterService
 {
     private readonly ILogger<SorterService> _logger;
     private readonly IHabiticaClient _habiticaClient;
-    private int _swapCounter = 0;
+    private int _swapCounter;
 
     public SorterService(ILogger<SorterService> logger, IHabiticaClient habiticaClient)
     {
         _logger = logger;
         _habiticaClient = habiticaClient;
     }
+
     public ICollection<Todo> GetTodosInFinalOrder(ICollection<Todo> todos, SortedList<int, Tag> tagsOrder)
     {
         var todosList = todos.ToList();
@@ -29,10 +30,10 @@ public class SorterService : ISorterService
     {
         var todosBeginOrder = todosToSort.ToList();
         var todosFinalOrder = todosInFinalOrder.ToList();
+
         var sortResult = await CyclicSort(todosBeginOrder, todosFinalOrder);
-        
         if (sortResult.IsFailed)
-            return Result.Fail(new Error(string.Join(", ", sortResult.Value.Notifications)));
+            return sortResult.ToResult();
 
         return Result.Ok();
     }
@@ -57,7 +58,7 @@ public class SorterService : ISorterService
                 i++;
             }
         }
-        
+
         _logger.LogInformation("Final swap counter value: {swapCounter} Total count of operations: {operationCount}", _swapCounter, _swapCounter * 2);
 
         return Result.Ok();
@@ -67,7 +68,7 @@ public class SorterService : ISorterService
     {
         var firstTodoToSwap = todosToSort.ElementAt(secondTodoFinalPosition);
         var secondTodoToSwap = todosToSort.ElementAt(firstTodoFinalPosition);
-        
+
         todosToSort.RemoveAt(firstTodoFinalPosition);
         todosToSort.Insert(firstTodoFinalPosition, firstTodoToSwap);
         todosToSort.RemoveAt(secondTodoFinalPosition);
@@ -79,14 +80,14 @@ public class SorterService : ISorterService
         var result = await _habiticaClient.MoveTodoToNewPosition(firstTodoToSwap, firstTodoFinalPosition);
         if (result.IsFailed)
             return result;
-        
+
         result = await _habiticaClient.MoveTodoToNewPosition(secondTodoToSwap, secondTodoFinalPosition);
         if (result.IsFailed)
             return result;
 
         _swapCounter++;
-        
-        _logger.LogDebug("Swapped todo: {first} from position: {firstTodoPos}\n and todo: {second} from position: {sedondTodoPos}", 
+
+        _logger.LogDebug("Swapped todo: {first} from position: {firstTodoPos}\n and todo: {second} from position: {secondTodoPos}",
             firstTodoToSwap.TaskName, secondTodoFinalPosition, secondTodoToSwap.TaskName, firstTodoFinalPosition);
 
         return Result.Ok();

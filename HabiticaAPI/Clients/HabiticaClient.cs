@@ -1,6 +1,9 @@
+using System.Net;
 using FluentResults;
+using HabiticaAPI.Models.Errors;
 using HabiticaAPI.Models.Responses;
 using HabiticaAPI.Models.Todos;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace HabiticaAPI.Clients;
@@ -36,7 +39,7 @@ public class HabiticaClient : IHabiticaClient
             }
             else
             {
-                return Result.Fail(new Error("Unable to get all todos."));
+                return Result.Fail(new NoDataError("Unable to get all todos."));
             }
         }
         catch (Exception e)
@@ -64,7 +67,7 @@ public class HabiticaClient : IHabiticaClient
             }
             else
             {
-                return Result.Fail(new Error("Unable to get all tags."));
+                return Result.Fail(new NoDataError("Unable to get all tags."));
             }
         }
         catch (Exception e)
@@ -84,13 +87,25 @@ public class HabiticaClient : IHabiticaClient
             HttpClient httpClient = CreateHttpClient();
             var response = await httpClient.PostAsync(url, null);
 
-            var responseContent = await response.Content.ReadAsStringAsync();
-            var parsedResponse = JsonConvert.DeserializeObject<MoveTodoToNewPositionResponse>(responseContent);
-
             if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var parsedResponse = JsonConvert.DeserializeObject<MoveTodoToNewPositionResponse>(responseContent);
+                
                 return Result.Ok(parsedResponse);
-            
-            return Result.Fail(new Error(string.Join(", ", parsedResponse.Notifications)));
+            }
+            else
+            {
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    _logger.LogError("Not find todo: {taskName} with id: {taskId}", todo.TaskName, taskId);
+                    return Result.Fail(new NoDataError("Todo to move not found."));
+                }
+                else
+                {
+                    return Result.Fail("Failed to move todo to a new position.");
+                }
+            }
         }
         catch (Exception e)
         {

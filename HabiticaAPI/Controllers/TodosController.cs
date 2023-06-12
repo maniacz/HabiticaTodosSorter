@@ -1,3 +1,4 @@
+using HabiticaAPI.Models.Errors;
 using HabiticaAPI.RequestHandlers.Todos;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,9 +39,17 @@ public class TodosController : Controller
         {
             return BadRequest();
         }
-        
-        var sortResult = await _todosRequestHandler.SortTodos(todosResult.Value.ToList());
 
-        return null;
+        var sortResult = await _todosRequestHandler.SortTodos(todosResult.Value.ToList());
+        if (sortResult.IsSuccess)
+        {
+            return Ok("Todos were successfully ordered.");
+        }
+        else if (sortResult.HasError<NoDataError>())
+        {
+            return NotFound(sortResult);
+        }
+
+        return BadRequest(sortResult);
     }
 }
