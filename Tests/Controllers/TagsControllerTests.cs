@@ -1,12 +1,11 @@
 using FluentResults;
-using HabiticaAPI.Clients;
 using HabiticaAPI.Controllers;
 using HabiticaAPI.Models.Responses;
 using HabiticaAPI.RequestHandlers.Tags;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Xunit;
 
 namespace Tests.Controllers;
 
@@ -22,7 +21,7 @@ public class TagsControllerTests
         _loggerMock = new Mock<ILogger<TagsController>>();
         _tagsControllerMock = new Mock<TagsController>(_tagsRequestHandlerMock.Object, _loggerMock.Object) { CallBase = true };
     }
-    
+
     [Fact]
     public async Task GetAllTags_HabiticaApiIsAvailable_ReturnsOkWithTags()
     {
