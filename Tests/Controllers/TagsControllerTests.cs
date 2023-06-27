@@ -1,7 +1,7 @@
 using FluentResults;
-using HabiticaAPI.Controllers;
-using HabiticaAPI.Models.Responses;
-using HabiticaAPI.RequestHandlers.Tags;
+using HabiticaTodosSorter.Controllers;
+using HabiticaTodosSorter.Models.Responses;
+using HabiticaTodosSorter.RequestHandlers.Tags;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;

@@ -1,6 +1,6 @@
 ﻿using Moq;
 using System.Net;
-using HabiticaAPI.Clients;
+using HabiticaTodosSorter.Clients;
 using Microsoft.Extensions.Configuration;
 using Tests.Clients;
 

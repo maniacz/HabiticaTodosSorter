@@ -1,7 +1,7 @@
 using System.Net;
-using HabiticaAPI.Clients;
-using HabiticaAPI.Controllers;
-using HabiticaAPI.Models.Responses;
+using HabiticaTodosSorter.Clients;
+using HabiticaTodosSorter.Controllers;
+using HabiticaTodosSorter.Models.Responses;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;

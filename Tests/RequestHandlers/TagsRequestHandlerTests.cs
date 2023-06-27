@@ -1,7 +1,7 @@
 using FluentResults;
-using HabiticaAPI.Clients;
-using HabiticaAPI.Models.Responses;
-using HabiticaAPI.RequestHandlers.Tags;
+using HabiticaTodosSorter.Clients;
+using HabiticaTodosSorter.Models.Responses;
+using HabiticaTodosSorter.RequestHandlers.Tags;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;

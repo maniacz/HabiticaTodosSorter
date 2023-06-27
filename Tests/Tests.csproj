@@ -25,7 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\HabiticaAPI\HabiticaAPI.csproj" />
+      <ProjectReference Include="..\HabiticaTodosSorter\HabiticaTodosSorter.csproj" />
     </ItemGroup>
 
 </Project>
