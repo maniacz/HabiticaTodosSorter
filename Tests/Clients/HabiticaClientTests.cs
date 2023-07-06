@@ -26,7 +26,7 @@ public class HabiticaClientTests
     public async Task GetAllTags_NoErrors_ReturnsOkWithTags()
     {
         // Arrange
-        var tagsResponse = new GetAllTagsResponse.TagData[]
+        var tagsData = new GetAllTagsResponse.TagData[]
         {
             new GetAllTagsResponse.TagData { Id = "958a73fb-d341-4513-83c2-c90c318193b5", Name = "dom" },
             new GetAllTagsResponse.TagData { Id = "f7ca5e48-7471-4bc3-ae65-baeba2fafa4c", Name = "praca" },
@@ -38,11 +38,17 @@ public class HabiticaClientTests
             new GetAllTagsResponse.TagData { Id = "0cfe6cb2-003c-4eaa-8d12-177aee36ec3f", Name = "pilne nieważne" }
         };
         
+        var tagsResponse = new GetAllTagsResponse
+        {
+            Success = true,
+            Data = tagsData
+        };
+
         var httpClientFactoryMock = HttpClientFactoryMockProvider.GetIHttpClientFactoryMock(
             new RouteResponse
             {
                 Method = HttpMethod.Get,
-                Route = $"/api/v3/tasks/user?type=todos",
+                Route = $"/api/v3/tags",
                 Response = new HttpResponseMessage
                 {
                     StatusCode = HttpStatusCode.OK,
@@ -57,6 +63,6 @@ public class HabiticaClientTests
 
         // Assert
         Assert.True(result.IsSuccess);
-        // todo: Assert result content, so far I don't know why it returns empty content
+        Assert.True(result.Value.Data.Length == tagsData.Length);
     }
 }

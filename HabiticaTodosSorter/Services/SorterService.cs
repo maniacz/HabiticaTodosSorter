@@ -87,7 +87,7 @@ public class SorterService : ISorterService
 
         _swapCounter++;
 
-        _logger.LogDebug("Swapped todo: {first} from position: {firstTodoPos}\n and todo: {second} from position: {secondTodoPos}",
+        _logger.LogDebug("Swapped todo: {first} from position: {firstTodoPos} and todo: {second} from position: {secondTodoPos}",
             firstTodoToSwap.TaskName, secondTodoFinalPosition, secondTodoToSwap.TaskName, firstTodoFinalPosition);
 
         return Result.Ok();

@@ -3,6 +3,7 @@ using HabiticaTodosSorter.Mappings;
 using HabiticaTodosSorter.RequestHandlers.Tags;
 using HabiticaTodosSorter.RequestHandlers.Todos;
 using HabiticaTodosSorter.Services;
+using Serilog;
 
 namespace HabiticaTodosSorter
 {
@@ -32,6 +33,9 @@ namespace HabiticaTodosSorter
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            
+            // Serilog
+            builder.Host.UseSerilog((ctx, lc) => lc.WriteTo.Console().WriteTo.Seq("http://localhost:5341"));
 
             var app = builder.Build();
 
