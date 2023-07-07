@@ -34,8 +34,14 @@ namespace HabiticaTodosSorter
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             
-            // Serilog
-            builder.Host.UseSerilog((ctx, lc) => lc.WriteTo.Console().WriteTo.Seq("http://localhost:5341"));
+            // Serilog & Seq
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Information()
+                .WriteTo.Console()
+                .WriteTo.File("logs/logs.txt", rollingInterval: RollingInterval.Day)
+                .WriteTo.Seq("http://localhost:5341")
+                .CreateLogger();
+            builder.Host.UseSerilog();
 
             var app = builder.Build();
 
