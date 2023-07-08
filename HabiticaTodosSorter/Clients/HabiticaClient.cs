@@ -1,9 +1,9 @@
+using System.Globalization;
 using System.Net;
 using FluentResults;
 using HabiticaTodosSorter.Models.Errors;
 using HabiticaTodosSorter.Models.Responses;
 using HabiticaTodosSorter.Models.Todos;
-using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace HabiticaTodosSorter.Clients;
@@ -21,7 +21,7 @@ public class HabiticaClient : IHabiticaClient
         _logger = logger;
     }
     
-    public async Task<Result<GetAllTodosResponse>> GetAllTodos()
+    public async Task<Result<GetAllTodosResponse?>> GetAllTodos()
     {
         var url = "/api/v3/tasks/user?type=todos";
         
@@ -37,10 +37,15 @@ public class HabiticaClient : IHabiticaClient
                 
                 return Result.Ok(parsedResponse);
             }
-            else
+            
+            if (response.StatusCode == HttpStatusCode.TooManyRequests)
             {
-                return Result.Fail(new NoDataError("Unable to get all todos."));
+                _logger.LogWarning("Habitica API returned - 429 Too Many Requests");
+                await WaitForNextPeriod(response);
+                return Result.Ok();
             }
+
+            return Result.Fail(new NoDataError("Unable to get all todos."));
         }
         catch (Exception e)
         {
@@ -49,7 +54,7 @@ public class HabiticaClient : IHabiticaClient
         }
     }
 
-    public async Task<Result<GetAllTagsResponse>> GetAllTags()
+    public async Task<Result<GetAllTagsResponse?>> GetAllTags()
     {
         var url = "/api/v3/tags";
         
@@ -65,10 +70,15 @@ public class HabiticaClient : IHabiticaClient
                 
                 return Result.Ok(parsedResponse);
             }
-            else
+            
+            if (response.StatusCode == HttpStatusCode.TooManyRequests)
             {
-                return Result.Fail(new NoDataError("Unable to get all tags."));
+                _logger.LogWarning("Habitica API returned - 429 Too Many Requests");
+                await WaitForNextPeriod(response);
+                return Result.Ok();
             }
+
+            return Result.Fail(new NoDataError("Unable to get all tags."));
         }
         catch (Exception e)
         {
@@ -77,7 +87,7 @@ public class HabiticaClient : IHabiticaClient
         }
     }
 
-    public async Task<Result<MoveTodoToNewPositionResponse>> MoveTodoToNewPosition(Todo todo, int todoFinalPosition)
+    public async Task<Result<MoveTodoToNewPositionResponse?>> MoveTodoToNewPosition(Todo todo, int todoFinalPosition)
     {
         var taskId = todo.TaskId.ToString();
         var url = $"/api/v3/tasks/{taskId}/move/to/{todoFinalPosition}";
@@ -94,22 +104,26 @@ public class HabiticaClient : IHabiticaClient
                 
                 return Result.Ok(parsedResponse);
             }
-            else
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                if (response.StatusCode == HttpStatusCode.NotFound)
-                {
-                    _logger.LogError("Not find todo: {taskName} with id: {taskId}", todo.TaskName, taskId);
-                    return Result.Fail(new NoDataError("Todo to move not found."));
-                }
-                else
-                {
-                    return Result.Fail("Failed to move todo to a new position.");
-                }
+                _logger.LogError("Not find todo {taskName} with id {taskId}", todo.TaskName, taskId);
+                return Result.Fail(new NoDataError("Todo to move not found."));
             }
+
+            if (response.StatusCode == HttpStatusCode.TooManyRequests)
+            {
+                _logger.LogWarning("Habitica API returned - 429 Too Many Requests");
+                await WaitForNextPeriod(response);
+                return Result.Ok();
+            }
+
+            _logger.LogError("Failed to move todo {todoName} to final position {todoPos}. Due to {reason}", todo.TaskName, todoFinalPosition, response.ReasonPhrase);
+            return Result.Fail("Failed to move todo to a new position.");
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Unexpected error occurred while moving todo: {taskName} to position: {pos}.", todo.TaskName, todoFinalPosition);
+            _logger.LogError(e, "Unexpected error occurred while moving todo {taskName} to position {pos}.", todo.TaskName, todoFinalPosition);
             return Result.Fail(new Error("Unexpected error occurred while while moving todo."));
         }
     }
@@ -119,10 +133,18 @@ public class HabiticaClient : IHabiticaClient
         var client = _httpClientFactory.CreateClient(nameof(HabiticaClient));
         var clientConfig = _configuration.GetSection("HabiticaClient").Get<HabiticaClientHeaders>();
         
-        client.DefaultRequestHeaders.Add("x-client", clientConfig.XClient);
-        client.DefaultRequestHeaders.Add("x-api-user", clientConfig.XApiUser);
-        client.DefaultRequestHeaders.Add("x-api-key", clientConfig.XApiKey);
+        client.DefaultRequestHeaders.Add("x-client", clientConfig?.XClient);
+        client.DefaultRequestHeaders.Add("x-api-user", clientConfig?.XApiUser);
+        client.DefaultRequestHeaders.Add("x-api-key", clientConfig?.XApiKey);
 
         return client;
+    }
+
+    private async Task WaitForNextPeriod(HttpResponseMessage response)
+    {
+        var remainingSecondsResponse = response.Headers.GetValues("Retry-After").First();
+        _logger.LogWarning("Required to wait for {seconds} seconds", remainingSecondsResponse);
+        var millisecondsToWait = (int)(Single.Parse(remainingSecondsResponse, CultureInfo.InvariantCulture) * 1000);
+        await Task.Delay(millisecondsToWait);
     }
 }
