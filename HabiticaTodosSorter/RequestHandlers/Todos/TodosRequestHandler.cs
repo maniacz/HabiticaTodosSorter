@@ -46,6 +46,7 @@ public class TodosRequestHandler : ITodosRequestHandler
         }
         
         var allTodos = _mapper.Map<List<Todo>>(result.Value.Data).SetTaskPosition().AssignTagNames(allTagsResult.Value);
+        _logger.LogInformation("Initial todos order: {todosList}", allTodos.ListTodosNames());
         return Result.Ok(allTodos);
     }
 

@@ -32,4 +32,17 @@ public static class TodosExtensions
 
         return todos;
     }
+
+    public static List<string> ListTodosNames(this IList<Todo> todos)
+    {
+        var todosNames = new List<string>();
+        int todoPosition = 0;
+        foreach (var todo in todos)
+        {
+            todoPosition++;
+            todosNames.Add(todoPosition + " - " + todo.TaskName + Environment.NewLine);
+        }
+
+        return todosNames;
+    }
 }

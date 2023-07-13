@@ -1,5 +1,6 @@
 using FluentResults;
 using HabiticaTodosSorter.Clients;
+using HabiticaTodosSorter.Extensions;
 using HabiticaTodosSorter.Models.Responses;
 using HabiticaTodosSorter.Models.Tags;
 using HabiticaTodosSorter.Models.Todos;
@@ -23,6 +24,7 @@ public class SorterService : ISorterService
         var todosList = todos.ToList();
         todosList.Sort(new TodoComparer(tagsOrder, _logger));
 
+        _logger.LogInformation("Final todos order: {todosList}", @todosList.ListTodosNames());
         return todosList;
     }
 
@@ -68,6 +70,10 @@ public class SorterService : ISorterService
     {
         var firstTodoToSwap = todosToSort.ElementAt(secondTodoFinalPosition);
         var secondTodoToSwap = todosToSort.ElementAt(firstTodoFinalPosition);
+        
+        _swapCounter++;
+        _logger.LogInformation("Swapping operation no: {swapCounter} - Swapping todo: {first} from position: {firstTodoPos} and todo: {second} from position: {secondTodoPos}",
+            _swapCounter, firstTodoToSwap.TaskName, secondTodoFinalPosition, secondTodoToSwap.TaskName, firstTodoFinalPosition);
 
         todosToSort.RemoveAt(firstTodoFinalPosition);
         todosToSort.Insert(firstTodoFinalPosition, firstTodoToSwap);
@@ -84,11 +90,6 @@ public class SorterService : ISorterService
         result = await _habiticaClient.MoveTodoToNewPosition(secondTodoToSwap, secondTodoFinalPosition);
         if (result.IsFailed)
             return result;
-
-        _swapCounter++;
-
-        _logger.LogInformation("Swap operation no: {swapCounter} - Swapped todo: {first} from position: {firstTodoPos} and todo: {second} from position: {secondTodoPos}",
-            _swapCounter, firstTodoToSwap.TaskName, secondTodoFinalPosition, secondTodoToSwap.TaskName, firstTodoFinalPosition);
 
         return Result.Ok();
     }
