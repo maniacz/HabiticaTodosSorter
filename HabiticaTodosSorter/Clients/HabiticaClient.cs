@@ -29,6 +29,8 @@ public class HabiticaClient : IHabiticaClient
         {
             HttpClient httpClient = CreateHttpClient();
             var response = await httpClient.GetAsync(url);
+            
+            LogRemainingRequestsCountAndTimeLeftToEndPeriod(response);
 
             if (response.IsSuccessStatusCode)
             {
@@ -63,6 +65,8 @@ public class HabiticaClient : IHabiticaClient
             HttpClient httpClient = CreateHttpClient();
             var response = await httpClient.GetAsync(url);
 
+            LogRemainingRequestsCountAndTimeLeftToEndPeriod(response);
+
             if (response.IsSuccessStatusCode)
             {
                 var responseContent = await response.Content.ReadAsStringAsync();
@@ -96,6 +100,8 @@ public class HabiticaClient : IHabiticaClient
         {
             HttpClient httpClient = CreateHttpClient();
             var response = await httpClient.PostAsync(url, null);
+            
+            LogRemainingRequestsCountAndTimeLeftToEndPeriod(response);
 
             if (response.IsSuccessStatusCode)
             {
@@ -146,5 +152,19 @@ public class HabiticaClient : IHabiticaClient
         _logger.LogWarning("Required to wait for {seconds} seconds", remainingSecondsResponse);
         var millisecondsToWait = (int)(Single.Parse(remainingSecondsResponse, CultureInfo.InvariantCulture) * 1000);
         await Task.Delay(millisecondsToWait);
+    }
+
+    private void LogRemainingRequestsCountAndTimeLeftToEndPeriod(HttpResponseMessage response)
+    {
+        var remainingRequestCount = response.Headers.GetValues("X-RateLimit-Remaining").First();
+        var periodEndHeader = response.Headers.GetValues("X-RateLimit-Reset").First();
+        var periodEndUtcValue = periodEndHeader.Substring(0, periodEndHeader.IndexOf("GMT") - 1);
+        var dateTimeFormat = "ddd MMM dd yyyy hh:mm:ss";
+        var periodEndUtc = DateTime.ParseExact(periodEndUtcValue, dateTimeFormat, CultureInfo.InvariantCulture);
+        var offsetToUtc = TimeZoneInfo.Local.GetUtcOffset(DateTime.UtcNow);
+        var periodEnd = periodEndUtc + offsetToUtc;
+        var secondsToEnd = (periodEnd - DateTime.Now).Seconds;
+        _logger.LogInformation("There are {remainingRequestCount} requests allowed in current time period which ends at {periodEnd} which is within {secondsToEnd} seconds",
+            remainingRequestCount, periodEnd.ToString("T"), secondsToEnd);
     }
 }
