@@ -80,8 +80,8 @@ public class SorterService : ISorterService
         todosToSort.RemoveAt(secondTodoFinalPosition);
         todosToSort.Insert(secondTodoFinalPosition, secondTodoToSwap);
 
-        // We will send 2 requests. The limit allows 30 requests every 60 seconds, so we need to wait for 2 sec.
-        await Task.Delay(2000);
+        // We will send 2 requests. The limit allows 30 requests every 60 seconds, so we need to wait for 4 sec.
+        await Task.Delay(4000);
 
         var result = await _habiticaClient.MoveTodoToNewPosition(firstTodoToSwap, firstTodoFinalPosition);
         if (result.IsFailed)
