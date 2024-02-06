@@ -44,16 +44,21 @@ public class HabiticaClientTests
             Data = tagsData
         };
 
+        var httpResponse = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(JsonConvert.SerializeObject(tagsResponse)),
+        };
+
+        httpResponse.Headers.Add("X-RateLimit-Remaining", "29");
+        httpResponse.Headers.Add("X-RateLimit-Reset", "Tue Feb 06 2024 07:45:39 GMT+0000 (Coordinated Universal Time)");
+
         var httpClientFactoryMock = HttpClientFactoryMockProvider.GetIHttpClientFactoryMock(
             new RouteResponse
             {
                 Method = HttpMethod.Get,
                 Route = $"/api/v3/tags",
-                Response = new HttpResponseMessage
-                {
-                    StatusCode = HttpStatusCode.OK,
-                    Content = new StringContent(JsonConvert.SerializeObject(tagsResponse))
-                }
+                Response = httpResponse
             });
 
         var habiticaClient = new HabiticaClient(httpClientFactoryMock.Object, _configuration, _logerMock.Object);
