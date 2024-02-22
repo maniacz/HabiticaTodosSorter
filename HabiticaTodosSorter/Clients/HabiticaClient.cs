@@ -159,7 +159,7 @@ public class HabiticaClient : IHabiticaClient
         var remainingRequestCount = response.Headers.GetValues("X-RateLimit-Remaining").First();
         var periodEndHeader = response.Headers.GetValues("X-RateLimit-Reset").First();
         var periodEndUtcValue = periodEndHeader.Substring(0, periodEndHeader.IndexOf("GMT") - 1);
-        var dateTimeFormat = "ddd MMM dd yyyy hh:mm:ss";
+        var dateTimeFormat = "ddd MMM dd yyyy HH:mm:ss";
         var periodEndUtc = DateTime.ParseExact(periodEndUtcValue, dateTimeFormat, CultureInfo.InvariantCulture);
         var offsetToUtc = TimeZoneInfo.Local.GetUtcOffset(DateTime.UtcNow);
         var periodEnd = periodEndUtc + offsetToUtc;
