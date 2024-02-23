@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Net;
+using System.Runtime.InteropServices;
 using FluentResults;
 using HabiticaTodosSorter.Models.Errors;
 using HabiticaTodosSorter.Models.Responses;
@@ -53,6 +54,31 @@ public class HabiticaClient : IHabiticaClient
         {
             _logger.LogError(e, "Unexpected error occurred while trying to get all todos.");
             return Result.Fail(new Error("Unexpected error occurred while trying to get all todos."));
+        }
+    }
+
+    public async Task<Result<GetTodoResponse?>> GetTodo(string taskId)
+    {
+        var url = $"/api/v3/tasks/{taskId}";
+
+        try
+        {
+            HttpClient httpClient = CreateHttpClient();
+            var response = await httpClient.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var parsedResponse = JsonConvert.DeserializeObject<GetTodoResponse>(responseContent);
+
+                return Result.Ok(parsedResponse);
+            }
+
+            return Result.Fail(new NoDataError());
+        }
+        catch (Exception)
+        {
+            return Result.Fail(new NoDataError());
         }
     }
 
@@ -167,4 +193,6 @@ public class HabiticaClient : IHabiticaClient
         _logger.LogInformation("There are {remainingRequestCount} requests allowed in current time period which ends at {periodEnd} which is within {secondsToEnd} seconds",
             remainingRequestCount, periodEnd.ToString("T"), secondsToEnd);
     }
+
+
 }

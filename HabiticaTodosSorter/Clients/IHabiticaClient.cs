@@ -7,6 +7,7 @@ namespace HabiticaTodosSorter.Clients;
 public interface IHabiticaClient
 {
     Task<Result<GetAllTodosResponse?>> GetAllTodos();
+    Task<Result<GetTodoResponse>> GetTodo(string taskId);
     Task<Result<GetAllTagsResponse?>> GetAllTags();
     Task<Result<MoveTodoToNewPositionResponse?>> MoveTodoToNewPosition(Todo todo, int todoFinalPosition);
 }

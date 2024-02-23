@@ -48,8 +48,8 @@ public class TagsControllerTests
 
         // Assert
         var okRequestResult = Assert.IsType<OkObjectResult>(result);
-        var response = Assert.IsType<Result<GetAllTagsResponse>>(okRequestResult.Value);
-        Assert.Equal(tagsResponse, response.Value);
+        var response = Assert.IsType<GetAllTagsResponse>(okRequestResult.Value);
+        Assert.Equal(tagsResponse, response);
     }
 
     [Fact]

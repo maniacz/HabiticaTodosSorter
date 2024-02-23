@@ -1,5 +1,6 @@
 using AutoMapper;
 using HabiticaTodosSorter.Constants;
+using HabiticaTodosSorter.Models.Dto;
 using HabiticaTodosSorter.Models.Responses;
 using HabiticaTodosSorter.Models.Tags;
 using HabiticaTodosSorter.Models.Todos;
@@ -16,7 +17,7 @@ public class TodoProfile : Profile
         CreateMap<string, Tag>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src));
 
-        CreateMap<TodoData, Todo>()
+        CreateMap<TaskDto, Todo>()
             .ForMember(x => x.TaskId, y => y.MapFrom(z => z.Id))
             .ForMember(x => x.Tags, y => y.MapFrom(z => z.Tags))
             .ForMember(x => x.TaskName, y => y.MapFrom(z => z.Text))

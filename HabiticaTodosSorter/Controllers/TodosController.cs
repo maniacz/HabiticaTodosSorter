@@ -1,4 +1,5 @@
 using HabiticaTodosSorter.Models.Errors;
+using HabiticaTodosSorter.Models.Requests;
 using HabiticaTodosSorter.RequestHandlers.Todos;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,6 +29,21 @@ public class TodosController : Controller
         else
         {
             return BadRequest();
+        }
+    }
+
+    [HttpGet("todo")]
+    public async Task<IActionResult> GetTodo([FromQuery] GetTodoRequest request)
+    {
+        var todoResult = await _todosRequestHandler.GetTodo(request);
+
+        if (todoResult.IsSuccess)
+        {
+            return Ok(todoResult.Value);
+        }
+        else
+        {
+            return BadRequest(todoResult?.Errors.FirstOrDefault()?.Message);
         }
     }
 

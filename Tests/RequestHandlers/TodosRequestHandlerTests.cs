@@ -3,6 +3,7 @@ using AutoMapper;
 using FluentResults;
 using HabiticaTodosSorter.Clients;
 using HabiticaTodosSorter.Mappings;
+using HabiticaTodosSorter.Models.Dto;
 using HabiticaTodosSorter.Models.Responses;
 using HabiticaTodosSorter.Models.Tags;
 using HabiticaTodosSorter.Models.Todos;
@@ -50,15 +51,15 @@ public class TodosRequestHandlerTests
         var todosResponse = new GetAllTodosResponse
         {
             Success = true,
-            Data = new TodoData[]
+            Data = new TaskDto[]
             {
-                new TodoData() { Id = "f472523e-9b46-4011-b6b4-9000408d3412", Text = ":inbox_tray: In-Basket" },
-                new TodoData() { Id = "e26536e9-876b-4c10-bf8f-2147874ad708", Text = ":bangbang::house: Przesiądź się na nowy Kontomierz" },
-                new TodoData() { Id = "3fb6acc1-e060-446f-a936-f9664fb21c65", Text = ":bangbang::moneybag: Przerób TV Pivot strategy, żeby działała dla n ostatnich barów" },
-                new TodoData() { Id = "16313b4a-3c7f-4bb1-816c-9eefb24b9731", Text = ":exclamation::moneybag: Obejrzyj filmiki z maila od Arkadiusz Wójcic z Exante" },
-                new TodoData() { Id = "ab6a21ea-0602-471a-9677-f3acffbb8372", Text = ":warning::car: Zareklamuj okulary" },
-                new TodoData() { Id = "7c971a37-b340-4aac-802a-651035222797", Text = ":warning::office: Ogarnij nową myszkę" },
-                new TodoData() { Id = "06df9500-2288-4f32-8bad-3b641d906c4b", Text = ":x::mag: Wypróbuj Bitwarden" }
+                new TaskDto() { Id = "f472523e-9b46-4011-b6b4-9000408d3412", Text = ":inbox_tray: In-Basket" },
+                new TaskDto() { Id = "e26536e9-876b-4c10-bf8f-2147874ad708", Text = ":bangbang::house: Przesiądź się na nowy Kontomierz" },
+                new TaskDto() { Id = "3fb6acc1-e060-446f-a936-f9664fb21c65", Text = ":bangbang::moneybag: Przerób TV Pivot strategy, żeby działała dla n ostatnich barów" },
+                new TaskDto() { Id = "16313b4a-3c7f-4bb1-816c-9eefb24b9731", Text = ":exclamation::moneybag: Obejrzyj filmiki z maila od Arkadiusz Wójcic z Exante" },
+                new TaskDto() { Id = "ab6a21ea-0602-471a-9677-f3acffbb8372", Text = ":warning::car: Zareklamuj okulary" },
+                new TaskDto() { Id = "7c971a37-b340-4aac-802a-651035222797", Text = ":warning::office: Ogarnij nową myszkę" },
+                new TaskDto() { Id = "06df9500-2288-4f32-8bad-3b641d906c4b", Text = ":x::mag: Wypróbuj Bitwarden" }
             }
         };
         _habiticaClientMock.Setup(x => x.GetAllTodos()).ReturnsAsync(todosResponse);
