@@ -22,7 +22,7 @@ public class TagsController : Controller
 
         if (tagsResult.IsSuccess)
         {
-            return Ok(tagsResult);
+            return Ok(tagsResult.Value);
         }
         else
         {
