@@ -44,7 +44,7 @@ public class TagsControllerTests
         _tagsRequestHandlerMock.Setup(x => x.GetAllTags()).ReturnsAsync(Result.Ok(tagsResponse));
 
         // Act
-        var result = await _tagsControllerMock.Object.GetAllTags();
+        var result = await _tagsControllerMock.Object.GetTags(Array.Empty<string>());
 
         // Assert
         var okRequestResult = Assert.IsType<OkObjectResult>(result);
@@ -59,9 +59,9 @@ public class TagsControllerTests
         _tagsRequestHandlerMock.Setup(x => x.GetAllTags()).ReturnsAsync(Result.Fail(""));
 
         // Act
-        var result = await _tagsControllerMock.Object.GetAllTags();
+        var result = await _tagsControllerMock.Object.GetTags(Array.Empty<string>());
 
         // Assert
-        Assert.IsType<BadRequestResult>(result);
+        Assert.IsType<BadRequestObjectResult>(result);
     }
 }

@@ -1,3 +1,5 @@
+using FluentResults;
+using HabiticaTodosSorter.Models.Responses;
 using HabiticaTodosSorter.RequestHandlers.Tags;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,9 +18,17 @@ public class TagsController : Controller
     }
 
     [HttpGet("tags")]
-    public async Task<IActionResult> GetAllTags()
+    public async Task<IActionResult> GetTags([FromQuery] ICollection<string> tagIds)
     {
-        var tagsResult = await _tagsRequestHandler.GetAllTags();
+        Result<GetAllTagsResponse> tagsResult;
+        if (tagIds.Count == 0)
+        {
+            tagsResult = await _tagsRequestHandler.GetAllTags();
+        }
+        else
+        {
+            tagsResult = await _tagsRequestHandler.GetTagsForGivenTagIds(tagIds);
+        }
 
         if (tagsResult.IsSuccess)
         {
@@ -26,7 +36,7 @@ public class TagsController : Controller
         }
         else
         {
-            return BadRequest();
+            return BadRequest(tagsResult.Errors?.FirstOrDefault()?.Message);
         }
     }
 }
