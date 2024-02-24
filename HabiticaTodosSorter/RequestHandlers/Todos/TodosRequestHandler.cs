@@ -116,4 +116,22 @@ public class TodosRequestHandler : ITodosRequestHandler
         var sortingResult = await _sorterService.SortTodos(todosToSort, sortedTodos);
         return sortingResult;
     }
+
+    public async Task<Result<List<Todo>>> GetTodosWithTagsAssigned(GetTodosWithTagsAssignedRequest request)
+    {
+        var allTodos = await _habiticaClient.GetAllTodos();
+
+        if (allTodos.IsSuccess)
+        {
+            var requestTagIds = request.Tags.Select(t  => t.Id.ToString()).ToList();
+            var allTodosWithTags = allTodos.Value?.Data.Where(task => task.Tags.Length > 0).ToList();
+            var todosWithTagsFromRequestAssigned = allTodosWithTags?.Where(todo => requestTagIds.All(rtid => todo.Tags.Contains(rtid))).ToList();
+
+            var result = _mapper.Map<List<Todo>>(todosWithTagsFromRequestAssigned);
+
+            return Result.Ok(result);
+        }
+
+        return Result.Fail("Habitica user doesn't have any todos defined.");
+    }
 }

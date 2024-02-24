@@ -11,4 +11,5 @@ public interface ITodosRequestHandler
     Task<Result<IList<Todo>>> GetAllTodos();
     Task<Result<Todo>> GetTodo(GetTodoRequest request);
     Task<Result> SortTodos(ICollection<Todo> todosToSort);
+    Task<Result<List<Todo>>> GetTodosWithTagsAssigned(GetTodosWithTagsAssignedRequest request);
 }

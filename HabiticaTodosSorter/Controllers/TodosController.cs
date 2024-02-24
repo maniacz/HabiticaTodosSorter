@@ -1,5 +1,6 @@
 using HabiticaTodosSorter.Models.Errors;
 using HabiticaTodosSorter.Models.Requests;
+using HabiticaTodosSorter.Models.Tags;
 using HabiticaTodosSorter.RequestHandlers.Todos;
 using Microsoft.AspNetCore.Mvc;
 
@@ -44,6 +45,28 @@ public class TodosController : Controller
         else
         {
             return BadRequest(todoResult?.Errors.FirstOrDefault()?.Message);
+        }
+    }
+
+    [HttpGet("todosWithTags")]
+    public async Task<IActionResult> GetTodosWithTagsAssigned([FromQuery] GetTodosWithTagsAssignedRequest request)
+    {
+        request = new GetTodosWithTagsAssignedRequest();
+        var tagsAssigned = new List<Tag>
+        {
+            new Tag { Id = Guid.Parse("958a73fb-d341-4513-83c2-c90c318193b5"), Name = "dom" },
+            new Tag { Id = Guid.Parse("2995fb09-6228-4388-9082-7fc657fd7a85"), Name = "pilne wa¿ne" }
+        };
+        request.Tags = tagsAssigned;
+
+        var todosResult = await _todosRequestHandler.GetTodosWithTagsAssigned(request);
+        if (todosResult.IsSuccess)
+        {
+            return Ok(todosResult.Value);
+        }
+        else
+        {
+            return BadRequest(todosResult?.Errors.FirstOrDefault()?.Message);
         }
     }
 
