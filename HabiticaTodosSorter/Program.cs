@@ -43,6 +43,16 @@ namespace HabiticaTodosSorter
                 .CreateLogger();
             builder.Host.UseSerilog();
 
+            // CORS
+            builder.Services.AddCors(setup =>
+            {
+                setup.AddDefaultPolicy(p =>
+                {
+                    p.WithOrigins("http://localhost:4200")
+                    .AllowAnyMethod();
+                });
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -53,7 +63,7 @@ namespace HabiticaTodosSorter
             }
 
             app.UseHttpsRedirection();
-
+            app.UseCors();
             app.UseAuthorization();
 
 
