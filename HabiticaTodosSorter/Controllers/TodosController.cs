@@ -25,7 +25,7 @@ public class TodosController : Controller
 
         if (todosResult.IsSuccess)
         {
-            return Ok(todosResult);
+            return Ok(todosResult.Value);
         }
         else
         {
