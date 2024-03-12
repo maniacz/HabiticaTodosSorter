@@ -17,7 +17,7 @@ public class TagsRequestHandler : ITagsRequestHandler
         _habiticaClient = habiticaClient;
         _logger = logger;
     }
-    
+
     public async Task<Result<GetAllTagsResponse>> GetAllTags()
     {
         var result = await _habiticaClient.GetAllTags();
@@ -54,5 +54,10 @@ public class TagsRequestHandler : ITagsRequestHandler
         // todo: komentarz linijka ni¿ej
         //return result; <- to te¿ dzia³a, wtf?
         return Result.Ok(result);
+    }
+
+    public async Task<Result<AddTagToTaskResponse>> AssignTagToTodo(string todoId, string tagId)
+    {
+        return await _habiticaClient.AssignTag(todoId, tagId);
     }
 }

@@ -39,4 +39,18 @@ public class TagsController : Controller
             return BadRequest(tagsResult.Errors?.FirstOrDefault()?.Message);
         }
     }
+
+    [HttpPost("addtag")]
+    public async Task<IActionResult> AddTagToTodo([FromQuery] string todoId, [FromQuery] string tagId)
+    {
+        var assignResult = await _tagsRequestHandler.AssignTagToTodo(todoId, tagId);
+        if (assignResult.IsSuccess)
+        {
+            return Ok(assignResult.Value);
+        }
+        else
+        {
+            return BadRequest(assignResult?.Errors.FirstOrDefault()?.Message);
+        }
+    }
 }

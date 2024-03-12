@@ -160,6 +160,52 @@ public class HabiticaClient : IHabiticaClient
         }
     }
 
+    public async Task<Result<AddTagToTaskResponse?>> AssignTag(string todoId, string tagId)
+    {
+        var url = $"api/v3/tasks/{todoId}/tags/{tagId}";
+
+        try
+        {
+            HttpClient httpClient = CreateHttpClient();
+            var response = await httpClient.PostAsync(url, null);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var parsedResponse = JsonConvert.DeserializeObject<AddTagToTaskResponse>(responseContent);
+
+                return Result.Ok(parsedResponse);
+            }
+
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var parsedResponse = JsonConvert.DeserializeObject<ErrorResponse>(responseContent);
+
+                if (parsedResponse != null && parsedResponse.Message.Contains("To zadanie jest ju¿ oznaczone danym tagiem."))
+                {
+                    _logger.LogError("Todo with id {todoId} already has assigned tag with id {tagId}", todoId, tagId);
+                    return Result.Fail(new Error("This tag has already been assigned to this todo."));
+                }
+
+                var errorsMessages = parsedResponse?.Errors.Select(e => e.Message).ToList();
+                if (errorsMessages != null && errorsMessages.Contains("\"tagId\" powinien byæ prawid³owym UUID odpowiadaj¹cym tagowi nale¿¹cemu do u¿ytkownika."))
+                {
+                    _logger.LogError("User has no tag defined with tag id: {tagId} No tag has been assigned.", tagId);
+                    return Result.Fail(new Error("No tag has been assigned. User doesn't have tag defined with such id."));
+                }
+            }
+
+            _logger.LogError("Tag has not been assigned");
+            return Result.Fail(new Error("Tag not assigned"));
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Unexpected error occurred while trying to assign tag to todo.");
+            return Result.Fail(new Error("Unexpected error occurred while trying to assign tag to todo."));
+        }
+    }
+
     private HttpClient CreateHttpClient()
     {
         var client = _httpClientFactory.CreateClient(nameof(HabiticaClient));
@@ -193,6 +239,4 @@ public class HabiticaClient : IHabiticaClient
         _logger.LogInformation("There are {remainingRequestCount} requests allowed in current time period which ends at {periodEnd} which is within {secondsToEnd} seconds",
             remainingRequestCount, periodEnd.ToString("T"), secondsToEnd);
     }
-
-
 }
