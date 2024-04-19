@@ -29,7 +29,7 @@ public class TodosController : Controller
         }
         else
         {
-            return BadRequest();
+            return BadRequest(todosResult?.Errors.FirstOrDefault()?.Message);
         }
     }
 

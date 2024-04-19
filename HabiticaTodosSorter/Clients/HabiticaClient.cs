@@ -48,6 +48,15 @@ public class HabiticaClient : IHabiticaClient
                 return Result.Ok();
             }
 
+
+            // todo: Put handling of all generic http failures like Unauthorized, timeout etc in one place
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                _logger.LogError("Habitica API returned - 401 Unauthorized. Check the secrets.");
+
+                return Result.Fail("Unauthorized");
+            }
+
             return Result.Fail(new NoDataError("Unable to get all todos."));
         }
         catch (Exception e)
