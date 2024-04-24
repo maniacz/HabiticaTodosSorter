@@ -9,4 +9,5 @@ public interface ITagsRequestHandler
     Task<Result<GetAllTagsResponse>> GetAllTags();
     Task<Result<GetAllTagsResponse>> GetTagsForGivenTagIds(ICollection<string> tagIds);
     Task<Result<AddTagToTaskResponse>> AssignTagToTodo(string todoId, string tagId);
+    Task<Result<bool>> DeleteTagFromTodo(string todoId, string tagId);
 }

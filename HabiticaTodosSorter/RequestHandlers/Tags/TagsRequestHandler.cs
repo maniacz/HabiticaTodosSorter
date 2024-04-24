@@ -60,4 +60,9 @@ public class TagsRequestHandler : ITagsRequestHandler
     {
         return await _habiticaClient.AssignTag(todoId, tagId);
     }
+
+    public async Task<Result<bool>> DeleteTagFromTodo(string todoId, string tagId)
+    {
+        return await _habiticaClient.DeleteTagFromTodo(todoId, tagId);
+    }
 }

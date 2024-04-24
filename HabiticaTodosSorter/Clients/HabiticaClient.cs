@@ -1,6 +1,5 @@
 using System.Globalization;
 using System.Net;
-using System.Runtime.InteropServices;
 using FluentResults;
 using HabiticaTodosSorter.Models.Errors;
 using HabiticaTodosSorter.Models.Responses;
@@ -212,6 +211,40 @@ public class HabiticaClient : IHabiticaClient
         {
             _logger.LogError(e, "Unexpected error occurred while trying to assign tag to todo.");
             return Result.Fail(new Error("Unexpected error occurred while trying to assign tag to todo."));
+        }
+    }
+
+    public async Task<Result<bool>> DeleteTagFromTodo(string todoId, string tagId)
+    {
+        var url = $"api/v3/tasks/{todoId}/tags/{tagId}";
+
+        try
+        {
+            HttpClient httpClient = CreateHttpClient();
+            var response = await httpClient.DeleteAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return Result.Ok(true);
+            }
+            else
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var parsedResponse = JsonConvert.DeserializeObject<ErrorResponse>(responseContent);
+                if (parsedResponse != null)
+                {
+                    var errorMessages = parsedResponse.Errors.Select(x => x.Message);
+                    var errorsJoined = String.Join(". ", errorMessages);
+                    return Result.Fail(new Error(errorsJoined));
+                }
+            }
+
+            return Result.Fail("Tag hasn't been removed from the Todo");
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Unexpected error occurred while trying to delete a tag from a todo.");
+            return Result.Fail(new Error("Unexpected error occurred while trying to delete a tag from a todo."));
         }
     }
 

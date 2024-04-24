@@ -53,4 +53,18 @@ public class TagsController : Controller
             return BadRequest(assignResult?.Errors.FirstOrDefault()?.Message);
         }
     }
+
+    [HttpDelete("removetagfromtodo/{taskId}/{tagId}")]
+    public async Task<IActionResult> DeleteTagFromTodo([FromRoute] string taskId, [FromRoute] string tagId)
+    {
+        var result = await _tagsRequestHandler.DeleteTagFromTodo(taskId, tagId);
+        if (result.IsSuccess)
+        {
+            return Ok(result.Value);
+        }
+        else
+        {
+            return BadRequest(result?.Errors.FirstOrDefault()?.Message);
+        }
+    }
 }
