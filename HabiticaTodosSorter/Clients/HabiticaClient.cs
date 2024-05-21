@@ -233,9 +233,13 @@ public class HabiticaClient : IHabiticaClient
                 var parsedResponse = JsonConvert.DeserializeObject<ErrorResponse>(responseContent);
                 if (parsedResponse != null)
                 {
-                    var errorMessages = parsedResponse.Errors.Select(x => x.Message);
-                    var errorsJoined = String.Join(". ", errorMessages);
-                    return Result.Fail(new Error(errorsJoined));
+                    string reason;
+                    var errorMessages = parsedResponse.Errors?.Select(x => x.Message);
+                    if (errorMessages?.Count() > 0)
+                        reason = String.Join(". ", errorMessages);
+                    else
+                        reason = parsedResponse.Message;
+                    return Result.Fail(new Error(reason));
                 }
             }
 
